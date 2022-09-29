@@ -18,7 +18,8 @@ export interface IPropsListTodo extends IPropsForm {
   handlerEditTodo: any;
   switchComplete(e: any): void;
   deleteAllTodo(): void;
-  onChangeSearchTodo: any;
+  onChangeSearchTodo(e: any): void;
   active: string[];
-  keyValue: any;
+  keyValue: string;
+  showBulk: string[];
 }

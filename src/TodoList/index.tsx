@@ -5,12 +5,13 @@ import { v4 as uuidv4 } from "uuid";
 import Styles from "./TodoList.module.css";
 import { KEY_LOCALSTORE_TODO } from "../constant/Form.constant";
 import { StateTodo } from "./TodoList.type";
-import { InitalStateLocalStore, searchArray } from "../utils/form.common";
+import { InitalStateLocalStore } from "../utils/form.common";
 
 const TodoListScreen = () => {
   const [todoList, setTodoList] = useState<StateTodo[]>(InitalStateLocalStore);
   const [active, setActive] = useState<string[]>([]);
-  const [keyValue, setKeyValue] = useState<any>("");
+  const [showBulk, setShowBulk] = useState<string[]>([]);
+  const [keyValue, setKeyValue] = useState<string>("");
 
   useLayoutEffect(() => {
     localStorage.setItem(KEY_LOCALSTORE_TODO, JSON.stringify(todoList));
@@ -81,8 +82,13 @@ const TodoListScreen = () => {
         }
       });
       setTodoList(newTodo);
+      if (showBulk?.includes(id)) {
+        setShowBulk(showBulk.filter((i) => i !== id));
+        return;
+      }
+      setShowBulk([...showBulk, id]);
     },
-    [todoList]
+    [showBulk, todoList]
   );
 
   const deleteAllTodo = useCallback(() => {
@@ -90,6 +96,7 @@ const TodoListScreen = () => {
       return todo.complete === false;
     });
     setTodoList(newTodos);
+    setShowBulk([]);
   }, [todoList]);
 
   const onChangeSearchTodo = useCallback((e: any) => {
@@ -110,6 +117,7 @@ const TodoListScreen = () => {
         switchComplete={switchComplete}
         deleteAllTodo={deleteAllTodo}
         keyValue={keyValue}
+        showBulk={showBulk}
       />
     </div>
   );

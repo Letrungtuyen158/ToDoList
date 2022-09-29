@@ -1,5 +1,5 @@
 import moment from "moment";
-import React from "react";
+import React, { memo } from "react";
 import { FORMAT_DATE } from "../constant/Form.constant";
 import { StateTodo } from "../TodoList/TodoList.type";
 import Styles from "./Form.module.css";
@@ -11,7 +11,9 @@ interface IProps {
 }
 const Form = (props: IProps) => {
   const { handlerSubmit, item, handlerEditTodo } = props;
+
   const today = moment(new Date()).format(FORMAT_DATE);
+
   return (
     <form
       onSubmit={
@@ -76,4 +78,4 @@ const Form = (props: IProps) => {
   );
 };
 
-export default Form;
+export default memo(Form);

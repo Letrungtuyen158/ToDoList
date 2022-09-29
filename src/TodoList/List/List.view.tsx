@@ -1,10 +1,11 @@
+import { isEmpty } from "ramda";
 import React, { memo, useEffect, useState } from "react";
 import Form from "../../components/Form";
 import { searchArray, sortedArray } from "../../utils/form.common";
 import { IPropsListTodo } from "../TodoList.type";
 import Styles from "./List.module.css";
 const TodoList = (props: IPropsListTodo) => {
-  const [data, setData] = useState<any>();
+  const [data, setData] = useState<any>([]);
   const {
     todoList,
     handlerDelete,
@@ -16,12 +17,16 @@ const TodoList = (props: IPropsListTodo) => {
     switchComplete,
     onChangeSearchTodo,
     keyValue,
+    showBulk,
   } = props;
+
   sortedArray(todoList);
+
   useEffect(() => {
     const aa = searchArray(todoList, keyValue);
     setData(aa);
   }, [keyValue, todoList]);
+
   const newData = keyValue?.length > 0 ? data : todoList;
   return (
     <div className={Styles.container}>
@@ -36,7 +41,7 @@ const TodoList = (props: IPropsListTodo) => {
             onChange={onChangeSearchTodo}
           />
           {newData &&
-            newData.map((item: any) => (
+            newData?.map((item: any) => (
               <div className={Styles.container_item} key={item?.idTodo}>
                 <div className={Styles.item} key={item?.idTodo}>
                   <section className={Styles.section}>
@@ -77,7 +82,7 @@ const TodoList = (props: IPropsListTodo) => {
             ))}
         </div>
       </div>
-      {
+      {!isEmpty(showBulk) && (
         <div className={Styles.checkbox}>
           <div>Bulk Action:</div>
           <section className={Styles.section}>
@@ -87,7 +92,7 @@ const TodoList = (props: IPropsListTodo) => {
             </button>
           </section>
         </div>
-      }
+      )}
     </div>
   );
 };
