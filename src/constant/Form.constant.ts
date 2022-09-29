@@ -1,0 +1,2 @@
+export const KEY_LOCALSTORE_TODO = "KEY_LOCALSTORE_TODO";
+export const FORMAT_DATE = "YYYY-MM-DD";
