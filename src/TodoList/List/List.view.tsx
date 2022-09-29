@@ -1,18 +1,28 @@
-import React, { memo } from "react";
+import React, { memo, useEffect, useState } from "react";
 import Form from "../../components/Form";
-import { IPropsListTodo } from "../Form.type";
+import { searchArray, sortedArray } from "../../utils/form.common";
+import { IPropsListTodo } from "../TodoList.type";
 import Styles from "./List.module.css";
 const TodoList = (props: IPropsListTodo) => {
+  const [data, setData] = useState<any>();
   const {
     todoList,
     handlerDelete,
     handlerSubmit,
     handlerShowDetail,
+    handlerEditTodo,
     active,
     deleteAllTodo,
     switchComplete,
+    onChangeSearchTodo,
+    keyValue,
   } = props;
-
+  sortedArray(todoList);
+  useEffect(() => {
+    const aa = searchArray(todoList, keyValue);
+    setData(aa);
+  }, [keyValue, todoList]);
+  const newData = keyValue?.length > 0 ? data : todoList;
   return (
     <div className={Styles.container}>
       <div className={Styles.container_list}>
@@ -23,9 +33,10 @@ const TodoList = (props: IPropsListTodo) => {
             className={Styles.input_title}
             name="title"
             placeholder="Search..."
+            onChange={onChangeSearchTodo}
           />
-          {todoList &&
-            todoList.map((item) => (
+          {newData &&
+            newData.map((item: any) => (
               <div className={Styles.container_item} key={item?.idTodo}>
                 <div className={Styles.item} key={item?.idTodo}>
                   <section className={Styles.section}>
@@ -34,6 +45,7 @@ const TodoList = (props: IPropsListTodo) => {
                       name="checkbox"
                       className={Styles.item_checkbox}
                       onChange={() => switchComplete(item?.idTodo)}
+                      checked={item?.complete}
                     />
                     <div className={Styles.item_title}>{item?.title}</div>
                   </section>
@@ -54,7 +66,11 @@ const TodoList = (props: IPropsListTodo) => {
                 </div>
                 {active.includes(item?.idTodo) && (
                   <div className={Styles.detail}>
-                    <Form handlerSubmit={handlerSubmit} />
+                    <Form
+                      handlerSubmit={handlerSubmit}
+                      item={item}
+                      handlerEditTodo={handlerEditTodo}
+                    />
                   </div>
                 )}
               </div>

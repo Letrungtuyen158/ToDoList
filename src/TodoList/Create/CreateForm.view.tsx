@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import Form from "../../components/Form";
-import { IPropsForm } from "../Form.type";
+import { IPropsForm } from "../TodoList.type";
 import Styles from "./CreateForm.module.css";
 
 function CreateFrorm(props: IPropsForm) {

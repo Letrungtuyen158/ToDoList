@@ -2,19 +2,19 @@ import React, { memo, useCallback, useLayoutEffect, useState } from "react";
 import Create from "./Create";
 import List from "./List";
 import { v4 as uuidv4 } from "uuid";
-import Styles from "./Form.module.css";
+import Styles from "./TodoList.module.css";
 import { KEY_LOCALSTORE_TODO } from "../constant/Form.constant";
-import { StateTodo } from "./Form.type";
-import { InitalStateLocalStore } from "../utils/form.common";
+import { StateTodo } from "./TodoList.type";
+import { InitalStateLocalStore, searchArray } from "../utils/form.common";
 
 const TodoListScreen = () => {
   const [todoList, setTodoList] = useState<StateTodo[]>(InitalStateLocalStore);
-  const [active, setActive] = useState<any>([]);
-  const [checkbox, setCheckBox] = useState<any>([]);
+  const [active, setActive] = useState<string[]>([]);
+  const [keyValue, setKeyValue] = useState<any>("");
 
   useLayoutEffect(() => {
     localStorage.setItem(KEY_LOCALSTORE_TODO, JSON.stringify(todoList));
-  });
+  }, [todoList]);
 
   const handlerSubmit = useCallback(
     (e: any) => {
@@ -36,6 +36,24 @@ const TodoListScreen = () => {
     [todoList]
   );
 
+  const handlerEditTodo = useCallback(
+    (e: any, id: string) => {
+      e.preventDefault();
+      const newTodos = [...todoList];
+      const target = e?.target?.elements;
+      newTodos.forEach((todo) => {
+        if (todo.idTodo === id) {
+          todo.description = target?.description?.value;
+          todo.title = target?.title?.value;
+          todo.date = target?.date?.value;
+          todo.piority = target?.piority?.value;
+        }
+      });
+      setTodoList(newTodos);
+    },
+    [todoList]
+  );
+
   const handlerDelete = useCallback(
     (id: string) => {
       setTodoList(todoList.filter((item) => item?.idTodo !== id));
@@ -44,9 +62,9 @@ const TodoListScreen = () => {
   );
 
   const handlerShowDetail = useCallback(
-    (id: number) => {
+    (id: string) => {
       if (active?.includes(id)) {
-        setActive(active.filter((i: number) => i !== id));
+        setActive(active.filter((i) => i !== id));
         return;
       }
       setActive([...active, id]);
@@ -62,17 +80,21 @@ const TodoListScreen = () => {
           todo.complete = !todo.complete;
         }
       });
-
       setTodoList(newTodo);
     },
     [todoList]
   );
+
   const deleteAllTodo = useCallback(() => {
     const newTodos = todoList.filter((todo) => {
       return todo.complete === false;
     });
     setTodoList(newTodos);
   }, [todoList]);
+
+  const onChangeSearchTodo = useCallback((e: any) => {
+    setKeyValue(e?.target?.value);
+  }, []);
 
   return (
     <div className={Styles.container}>
@@ -82,9 +104,12 @@ const TodoListScreen = () => {
         handlerDelete={handlerDelete}
         handlerSubmit={handlerSubmit}
         handlerShowDetail={handlerShowDetail}
+        handlerEditTodo={handlerEditTodo}
+        onChangeSearchTodo={onChangeSearchTodo}
         active={active}
         switchComplete={switchComplete}
         deleteAllTodo={deleteAllTodo}
+        keyValue={keyValue}
       />
     </div>
   );

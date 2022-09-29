@@ -1,25 +1,31 @@
 import moment from "moment";
 import React from "react";
 import { FORMAT_DATE } from "../constant/Form.constant";
+import { StateTodo } from "../TodoList/TodoList.type";
 import Styles from "./Form.module.css";
 
 interface IProps {
   handlerSubmit(e: any): void;
+  item?: StateTodo;
+  handlerEditTodo?(e: any, id: string): void;
 }
 const Form = (props: IProps) => {
-  const { handlerSubmit } = props;
+  const { handlerSubmit, item, handlerEditTodo } = props;
   const today = moment(new Date()).format(FORMAT_DATE);
   return (
-    <form onSubmit={handlerSubmit} className={Styles.form}>
+    <form
+      onSubmit={
+        item ? (e: any) => handlerEditTodo?.(e, item?.idTodo) : handlerSubmit
+      }
+      className={Styles.form}
+    >
       <input
         type="text"
         className={Styles.input_title}
         name="title"
         placeholder="Add new task..."
+        defaultValue={item ? item?.title : ""}
       />
-      {/* {error === "required" ? (
-        <div className={Styles?.error}>{error}</div>
-      ) : null} */}
       <div className={Styles.div_1}>
         <label className={Styles.label} htmlFor="description">
           Description
@@ -30,6 +36,7 @@ const Form = (props: IProps) => {
           rows={4}
           cols={10}
           name="description"
+          defaultValue={item ? item?.description : ""}
         />
       </div>
 
@@ -41,7 +48,7 @@ const Form = (props: IProps) => {
           <input
             className={Styles.div_2_input}
             type="Date"
-            defaultValue={today}
+            defaultValue={item ? item.date : today}
             id="date"
             name="date"
           />
@@ -50,7 +57,12 @@ const Form = (props: IProps) => {
           <label className={Styles.label} htmlFor="">
             Piority
           </label>
-          <select className={Styles.div_2_input} id="cars" name="piority">
+          <select
+            className={Styles.div_2_input}
+            id="cars"
+            name="piority"
+            defaultValue={item ? item.piority : "Low"}
+          >
             <option value="low">Low</option>
             <option value="normal">Normal</option>
             <option value="high">High</option>
@@ -58,7 +70,7 @@ const Form = (props: IProps) => {
         </section>
       </div>
       <button className={Styles.button} type="submit">
-        Add
+        {item ? "Edit" : "Add"}
       </button>
     </form>
   );
